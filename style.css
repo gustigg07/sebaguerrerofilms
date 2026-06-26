@@ -409,6 +409,20 @@ h1, h2, h3, .section-title, .big-logo, .num {
 .service-item p { max-width: 350px; font-size: 0.9rem; color: #777; text-align: right; }
 .service-item:hover { border-bottom-color: var(--orange); background: linear-gradient(to right, rgba(255, 77, 0, 0.03), transparent); }
 
+/* Solo celular: apilar número, título y descripción en lugar de
+   comprimirlos en una sola fila. El escritorio queda igual. */
+@media (max-width: 768px) {
+    .service-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 40px 0;
+    }
+    .service-item .num { width: auto; }
+    .service-item h2 { padding-left: 0; }
+    .service-item p { max-width: 100%; text-align: left; }
+}
+
 /* 7. PORTFOLIO — CARRUSEL RUEDA 3D */
 .portfolio-slider { padding: 100px 0 60px; overflow: hidden; position: relative; }
 
@@ -573,6 +587,24 @@ h1, h2, h3, .section-title, .big-logo, .num {
     .video-card.right1 { transform: translate3d(55vw, 0, -200px) rotateY(-30deg); width: 40vw; height: 22vw; }
 }
 
+/* Ajuste EXCLUSIVO para celular en vertical: tarjetas laterales más discretas
+   y altura fija para que no se vea apretado. No afecta escritorio ni horizontal. */
+@media (max-width: 600px) and (orientation: portrait) {
+    .carousel-container { height: 260px; perspective: 900px; }
+    .video-card.center { width: 86vw; height: 220px; }
+    .video-card.left1 {
+        width: 28vw; height: 170px;
+        transform: translate3d(-46vw, 0, -260px) rotateY(35deg);
+        opacity: 0.4;
+    }
+    .video-card.right1 {
+        width: 28vw; height: 170px;
+        transform: translate3d(46vw, 0, -260px) rotateY(-35deg);
+        opacity: 0.4;
+    }
+    .video-card.far { opacity: 0; }
+}
+
 
 /* 8. MODO CINE (MODAL) PREMIUM */
 .video-modal {
@@ -708,6 +740,11 @@ footer {
     .contact-wrapper { grid-template-columns: 1fr; }
     .video-card { flex: 0 0 85vw; height: 250px; }
     .hero h1 { letter-spacing: 0.1em !important; }
+
+    /* El selector de idioma se ve apretado junto al botón de WhatsApp y la
+       hamburguesa en celular. Ya está disponible dentro del menú móvil
+       (.mobile-lang-switch), así que en el navbar solo lo ocultamos aquí. */
+    .nav-right .lang-selector { display: none; }
 }
 
 @keyframes pulse-orange {
@@ -1230,63 +1267,9 @@ footer {
         font-size: 1rem; /* Un poco más pequeño en móvil para legibilidad */
     }
 }
-/* =========================================
-   TÍTULO PREMIUM (SOLUCIÓN DEFINITIVA)
-   ========================================= */
+/* (El bloque de .title-premium se unificó más abajo, en
+   "TÍTULOS UNIFICADOS — ESTILO PREMIUM", para evitar duplicados) */
 
-.title-premium {
-    /* Eliminamos el line-height problemático */
-    line-height: 1.2; 
-    font-size: clamp(2rem, 5vw, 3.8rem);
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    text-align: center;
-    color: white;
-    /* Usamos Flexbox para apilar Título + Subtítulo */
-    display: block;
-    flex-direction: column;
-    
-    
-    margin-bottom: 30px;
-    padding-top: 20px; /* Espacio extra para que no se corte la tilde */
-
-    /* Degradado Metálico */
-    background: linear-gradient(to bottom, #ffffff 45%, #888 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-}
-
-/* Subtítulo Naranja (PARTNERS / REVIEWS) */
-.title-premium::after {
-    content: attr(data-subtitle);
-    display: block;
-    
-    /* Estilo del subtítulo */
-    font-size: 0.65rem;
-    letter-spacing: 1.2em;
-    font-weight: 400;
-    margin-top: 15px; /* Separación controlada del título principal */
-    
-    /* Reset de color para que Brille en Naranja */
-    color: var(--orange) !important;
-    -webkit-text-fill-color: var(--orange)!important;
-    
-    opacity: 0.8;
-    text-shadow: 0 0 10px rgba(255, 77, 0, 0.5);
-    text-transform: uppercase;
-}
-
-/* Línea de Neón */
-.title-separator {
-    width: 50px;
-    height: 2px;
-    background: var(--orange);
-    margin: 0 auto 80px; /* Centrado simple */
-    box-shadow: 0 0 15px var(--orange);
-}
 /* Animación de entrada para los links del móvil */
 .mobile-menu-overlay.active .mobile-link {
     animation: slideInUp 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards;
@@ -1530,6 +1513,17 @@ footer {
     background: var(--orange);
     margin: 0 auto 80px;
     box-shadow: 0 0 15px var(--orange), 0 0 30px rgba(255,77,0,0.4);
+}
+
+/* Solo celular: el letter-spacing de 1.2em en los subtítulos (ej. "ASISTENCIA
+   PROFESIONAL") se desborda en pantallas chicas. Lo reducimos y damos un poco
+   de padding lateral. Desktop queda igual. */
+@media (max-width: 768px) {
+    .title-premium::after {
+        letter-spacing: 0.35em;
+        font-size: 0.6rem;
+        padding: 0 5%;
+    }
 }
 
 /* text-orange dentro de service-item h2 no hereda el clip */
