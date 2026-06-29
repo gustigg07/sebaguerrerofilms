@@ -1527,9 +1527,13 @@ footer {
    de padding lateral. Desktop queda igual. */
 @media (max-width: 768px) {
     .title-premium {
-        letter-spacing: 0.04em;
-        font-size: clamp(1.7rem, 7vw, 2.6rem);
+        letter-spacing: 0;
+        font-size: clamp(1.3rem, 6vw, 2.4rem);
         padding: 0 4%;
+        white-space: normal;
+        overflow-wrap: normal;
+        word-break: normal;
+        hyphens: none;
     }
     .title-premium::after {
         letter-spacing: 0.35em;
