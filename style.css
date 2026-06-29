@@ -689,13 +689,16 @@ footer {
 }
 
 .footer-logo-md {
-    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-size: clamp(1.1rem, 5vw, 2.8rem);
     font-weight: 900;
     letter-spacing: 0.35em;
     color: white;
     margin-bottom: 8px;
     text-transform: uppercase;
+    max-width: 100%;
+    word-break: break-word;
 }
+
 .footer-logo-md span { color: var(--orange); text-shadow: 0 0 10px rgba(255, 77, 0, 0.5); }
 
 .footer-brand p {
@@ -723,6 +726,16 @@ footer {
 .footer-nav a:hover { color: var(--orange); }
 .copyright { font-size: 0.65rem; color: #333; letter-spacing: 0.15em; }
 
+@media (max-width: 768px) {
+    .footer-logo-md {
+        letter-spacing: 0.15em;
+    }
+}
+@media (max-width: 768px) {
+    .footer-logo-md {
+        letter-spacing: 0.15em; 
+    }
+}
 /* 11. WHATSAPP FLOTANTE */
 .whatsapp-btn {
     position: fixed; bottom: 30px; right: 30px; z-index: 999;
@@ -735,15 +748,13 @@ footer {
 /* 12. RESPONSIVO */
 @media (max-width: 992px) {
     .nav-menu { display: none; }
-    .hamburger { display: flex; } /* Mostramos hamburguesa */
+    .hamburger { display: flex; } 
     .nav-container { justify-content: space-between; }
     .contact-wrapper { grid-template-columns: 1fr; }
     .video-card { flex: 0 0 85vw; height: 250px; }
     .hero h1 { letter-spacing: 0.1em !important; }
 
-    /* El selector de idioma se ve apretado junto al botón de WhatsApp y la
-       hamburguesa en celular. Ya está disponible dentro del menú móvil
-       (.mobile-lang-switch), así que en el navbar solo lo ocultamos aquí. */
+    
     .nav-right .lang-selector { display: none; }
 }
 
@@ -761,7 +772,6 @@ footer {
    SISTEMA DE REVELACIÓN (SCROLL CINEMÁTICO)
    ========================================= */
 
-/* Configuración de secciones genéricas reveal */
 .reveal {
     opacity: 0;
     transform: translateY(100px) scale(0.95);
@@ -769,7 +779,7 @@ footer {
     transition: all 1.8s cubic-bezier(0.2, 1, 0.3, 1);
     will-change: transform, opacity, filter;
     will-change: transform, opacity;
-    backface-visibility: hidden; /* Evita micro-parpadeos en Chrome */
+    backface-visibility: hidden; 
 }
 
 .reveal.active {
@@ -789,7 +799,7 @@ footer {
 .bio-container-zigzag {
     display: flex;
     flex-direction: column;
-    gap: 120px; /* Separación épica entre bloques */
+    gap: 120px; 
     margin-top: 60px;
 }
 
@@ -806,12 +816,11 @@ footer {
     flex-direction: row-reverse !important;
 }
 
-/* Los impares se mantienen normales */
+
 .bio-container-zigzag .bio-row:nth-child(odd) {
     flex-direction: row !important;
 }
 
-/* Responsivo para celulares (todo se apila verticalmente y centrado) */
 @media (max-width: 768px) {
     .bio-container-zigzag .bio-row,
     .bio-container-zigzag .bio-row:nth-child(even),
@@ -821,7 +830,6 @@ footer {
         gap: 30px;
     }
 }
-/* Animación cuando entra en pantalla */
 .bio-row.active {
     opacity: 1;
     transform: translateY(0);
@@ -835,13 +843,12 @@ footer {
     border-radius: 15px;
     overflow: hidden;
     line-height: 0;
-    /* Efecto Neón Naranja */
     border: 2px solid var(--orange);
     box-shadow: 0 0 15px rgba(255, 77, 0, 0.4), 
                 inset 0 0 10px rgba(255, 77, 0, 0.2);
     transition: box-shadow 0.4s ease;
     will-change: transform, opacity;
-    backface-visibility: hidden; /* Evita micro-parpadeos en Chrome */
+    backface-visibility: hidden; 
     height: 500px;
     background: #000;
 }
@@ -856,7 +863,7 @@ footer {
     height: 100% !important;
     object-fit: cover !important;
     transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-    object-position: center; /* Centra el encuadre */
+    object-position: center; 
     display: block;
 }
 
@@ -931,28 +938,27 @@ footer {
     .bio-info-card {
         width: 100%;
         padding: 40px 30px;
-        margin-top: -40px; /* Efecto de solapamiento sobre la imagen */
+        margin-top: -40px; 
         z-index: 2;
     }
 }
 /* --- BOTÓN WHATSAPP FLOTANTE --- */
-/* Contenedor principal del botón */
 .whatsapp-btn-float {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background-color: #25d366; /* Verde de WhatsApp */
+    background-color: #25d366; 
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50px;
-    padding: 15px; /* Mantiene el botón redondo inicialmente */
+    padding: 15px;
     text-decoration: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease-in-out;
     z-index: 999;
-    overflow: hidden; /* Evita que el texto se salga antes de la animación */
+    overflow: hidden; 
 }
 
 /* Ícono de WhatsApp */
@@ -967,7 +973,7 @@ footer {
 .whatsapp-btn-float span {
     max-width: 0;
     opacity: 0;
-    white-space: nowrap; /* Evita que el texto se parta en dos líneas */
+    white-space: nowrap; 
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 15px;
@@ -977,15 +983,15 @@ footer {
 
 /* Expansión del botón al hacer hover */
 .whatsapp-btn-float:hover {
-    padding: 15px 25px; /* Agrega espacio a los lados para que respire el texto */
-    background-color: #20b858; /* Verde ligeramente más oscuro al pasar el mouse */
+    padding: 15px 25px; 
+    background-color: #20b858; 
 }
 
 /* Aparición del texto al hacer hover */
 .whatsapp-btn-float:hover span {
-    max-width: 150px; /* Ancho máximo para que entre la palabra */
+    max-width: 150px; 
     opacity: 1;
-    margin-left: 10px; /* Separa el texto del ícono */
+    margin-left: 10px; 
 }
 /* =========================================
    REPARACIÓN DE AJUSTE TOTAL (MÓVIL)
@@ -1025,8 +1031,8 @@ footer {
 
     /* 3. Títulos (Sección Proyectos Cinematográficos) */
     .section-title {
-        font-size: 1.6rem !important; /* Evita que el título se corte */
-        margin-left: 5% !important;   /* Menos margen para ganar espacio */
+        font-size: 1.6rem !important; 
+        margin-left: 5% !important;   
         padding-left: 20px !important;
         width: 90% !important;
         letter-spacing: 0.1em !important;
@@ -1035,21 +1041,21 @@ footer {
 
     /* 4. Portfolio 3D (Ajuste Elástico) */
     .carousel-container {
-        padding: 40px 10vw !important; /* Centra el carrusel en la pantalla */
+        padding: 40px 10vw !important; 
         gap: 20px !important;
-        perspective: none !important; /* Quitamos la perspectiva fuerte para evitar cortes */
+        perspective: none !important; 
     }
 
     .video-card {
-        flex: 0 0 80vw !important; /* La tarjeta ahora mide el 80% de la pantalla */
+        flex: 0 0 80vw !important; 
         height: 220px !important;
-        transform: rotateY(0deg) scale(1) !important; /* Eliminamos el giro que corta los bordes */
+        transform: rotateY(0deg) scale(1) !important; 
         opacity: 0.6;
     }
 
     .video-card.center {
         opacity: 1 !important;
-        transform: scale(1.08) !important; /* Solo un pequeño zoom para destacar */
+        transform: scale(1.08) !important; 
     }
 
     /* 5. Biografía y Contenido */
@@ -1062,12 +1068,12 @@ footer {
     }
 
     .bio-media img, .bio-media video {
-        height: 250px !important; /* Altura controlada */
+        height: 250px !important; 
     }
 
     .bio-info-card {
         padding: 30px 20px !important;
-        margin-top: -20px !important; /* Mantiene el look premium sin estorbar */
+        margin-top: -20px !important; 
     }
 
     .bio-info-card h3 {
@@ -1089,7 +1095,7 @@ footer {
     .footer-bottom {
         flex-direction: column !important;
         gap: 25px;
-        padding-bottom: 100px; /* Espacio para el botón de WhatsApp flotante */
+        padding-bottom: 100px; 
     }
 }
 /* =========================================
@@ -1100,7 +1106,7 @@ footer {
     background: #050505;
     border-top: 1px solid rgba(255, 77, 0, 0.2);
     overflow: hidden;
-    display: block !important; /* Forzamos visibilidad */
+    display: block !important; 
     opacity: 1 !important;
 }
 
@@ -1177,14 +1183,13 @@ footer {
 
 .testimonials-container {
     display: grid;
-    /* Cuadrícula adaptable para escritorio y móvil */
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 60px; /* Espaciado premium */
+    gap: 60px;
     padding: 0 10%;
 }
 
 .testimonial-card {
-    background: transparent; /* Fondo flotante minimalista */
+    background: transparent; 
     border: none;
     padding: 20px;
     position: relative;
@@ -1222,14 +1227,14 @@ footer {
 
 .testimonial-text {
     /* --- AJUSTE DE TAMAÑO SOLICITADO --- */
-    font-size: 1.15rem; /* Intermedio elegante */
+    font-size: 1.15rem; 
     font-weight: 300;
     color: #eee;
     line-height: 1.7;
     margin-bottom: 35px;
     font-family: 'Inter', sans-serif;
     letter-spacing: -0.01em;
-    font-style: italic; /* Da un aire más personal y de lujo */
+    font-style: italic; 
 }
 
 .testimonial-author {
@@ -1264,11 +1269,10 @@ footer {
         gap: 40px;
     }
     .testimonial-text {
-        font-size: 1rem; /* Un poco más pequeño en móvil para legibilidad */
+        font-size: 1rem; 
     }
 }
-/* (El bloque de .title-premium se unificó más abajo, en
-   "TÍTULOS UNIFICADOS — ESTILO PREMIUM", para evitar duplicados) */
+
 
 /* Animación de entrada para los links del móvil */
 .mobile-menu-overlay.active .mobile-link {
@@ -1338,10 +1342,10 @@ footer {
     left: 0;
     width: 100%;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.95); /* Fondo negro profundo */
-    backdrop-filter: blur(15px); /* Desenfoque elegante */
+    background: rgba(0, 0, 0, 0.95); 
+    backdrop-filter: blur(15px); 
     z-index: 99999;
-    display: none; /* Se activa con .active */
+    display: none; 
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -1359,7 +1363,7 @@ footer {
     top: 30px;
     right: 30px;
     font-size: 3.5rem;
-    color: var(--orange); /* Tu color naranja */
+    color: var(--orange); 
     cursor: pointer;
     line-height: 1;
     transition: transform 0.3s ease;
@@ -1446,8 +1450,6 @@ footer {
 }
 /* =========================================
    TÍTULOS UNIFICADOS — ESTILO PREMIUM
-   Segunda palabra en naranja, centrado,
-   subtítulo naranja, barra neón
    ========================================= */
 
 .title-premium {
@@ -1522,9 +1524,6 @@ footer {
     box-shadow: 0 0 15px var(--orange), 0 0 30px rgba(255,77,0,0.4);
 }
 
-/* Solo celular: el letter-spacing de 1.2em en los subtítulos (ej. "ASISTENCIA
-   PROFESIONAL") se desborda en pantallas chicas. Lo reducimos y damos un poco
-   de padding lateral. Desktop queda igual. */
 @media (max-width: 768px) {
     .title-premium {
         letter-spacing: 0;
