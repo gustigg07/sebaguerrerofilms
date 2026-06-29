@@ -1528,7 +1528,7 @@ footer {
 @media (max-width: 768px) {
     .title-premium {
         letter-spacing: 0;
-        font-size: clamp(1.3rem, 6vw, 2.4rem);
+        font-size: clamp(1.1rem, 5.5vw, 2.2rem);
         padding: 0 4%;
         white-space: normal;
         overflow-wrap: normal;
