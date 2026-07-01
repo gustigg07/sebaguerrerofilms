@@ -599,6 +599,16 @@
                         <span class="author-position" data-key="pos_3">Head of Marketing, Obsidian Co.</span>
                     </div>
                 </div>
+                <div class="testimonial-card">
+                    <div class="quote-icon">“</div>
+                    <p class="testimonial-text">
+                        Un excelente profesional
+                    </p>
+                    <div class="testimonial-author">
+                        <span class="author-name">Gustavo</span>
+                        <span class="author-position">Gerente</span>
+                    </div>
+                </div>
             </div>
 
             <div class="testi-controls">
@@ -689,6 +699,10 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const select = (id) => document.getElementById(id);
+
+    // Configuración de Supabase (usada por el formulario de contacto y el de comentarios)
+    const SUPABASE_URL = 'https://ybudwaxxndletqsitjrt.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_T2vPKrMq5nK9tnEaqsYsZQ_ebp24KF2';
     const q = (sel) => document.querySelector(sel);
     const qa = (sel) => document.querySelectorAll(sel);
 
@@ -940,6 +954,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if(modal) modal.onclick = (e) => { if(e.target === modal) closeMod(); };
 
     // --- FORMULARIO CORREGIDO ---
+    // Se guarda en dos lugares en paralelo:
+    // 1) Supabase (tabla "inquiries") -> respaldo que NUNCA se pierde, ni
+    //    aunque Formshield decida marcarlo como spam. Lo revisás vos cuando
+    //    quieras en el Table Editor de Supabase.
+    // 2) Formspree -> te llega por email cuando no lo marca como spam.
     const f = select('contactForm');
     if(f) f.onsubmit = async (e) => {
         e.preventDefault();
@@ -952,6 +971,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         btn.innerText = '✦ ENVIANDO...';
         btn.disabled = true;
+
+        // Respaldo en Supabase (no bloquea el envío si falla)
+        try {
+            await fetch(`${SUPABASE_URL}/rest/v1/inquiries`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    apikey: SUPABASE_ANON_KEY,
+                    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                    Prefer: 'return=minimal'
+                },
+                body: JSON.stringify(data)
+            });
+        } catch (err) { /* si falla el respaldo, igual seguimos con Formspree */ }
 
         try {
             const res = await fetch(`https://formspree.io/f/mkoljpvo`, {
@@ -1152,40 +1185,55 @@ document.addEventListener("DOMContentLoaded", () => {
         window._testiRefresh = function() { buildDots(); goTo(getCards().length - 1); startAuto(); };
     })();
 
-    // --- FORMULARIO DE COMENTARIOS ---
-    // IMPORTANTE: antes esto solo guardaba el comentario en el navegador de
-    // quien lo escribía (localStorage), así que nadie más lo veía y a vos
-    // tampoco te llegaba. Ahora se envía por email a través de Formspree
-    // (gratis hasta 50 envíos/mes: https://formspree.io). Vos lo revisás y,
-    // si te gusta, lo agregás "a mano" como testimonial-card fijo en el HTML.
-    //
-    // PASO PENDIENTE: creá una cuenta gratis en https://formspree.io,
-    // generá un formulario y reemplazá la URL de abajo (FORMSPREE_ENDPOINT)
-    // por la que te den a vos. Sin ese paso, el formulario sigue mostrando
-    // la tarjeta en pantalla para quien la escribe, pero no te llega el aviso.
+    // --- FORMULARIO DE COMENTARIOS (con moderación) ---
+    // Cómo funciona ahora:
+    // 1. Alguien escribe un comentario -> se guarda en Supabase con approved = false.
+    //    También se manda una copia por email vía Formspree, para que te enteres.
+    // 2. NO se muestra en la web todavía (por eso ya no aparece la tarjeta al
+    //    instante para quien lo escribe: sería mentira, porque nadie más lo ve).
+    // 3. Vos entrás al Table Editor de Supabase, marcás approved = true en el
+    //    comentario que quieras publicar, y automáticamente aparece en la web
+    //    para todos los visitantes la próxima vez que carguen la página.
+
+    function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // --- Cargar y mostrar comentarios YA APROBADOS ---
+    (async function loadApprovedComments() {
+        const track = document.getElementById('testimonialsTrack');
+        if (!track || SUPABASE_URL.includes('TU-PROYECTO')) return; // todavía sin configurar
+
+        try {
+            const res = await fetch(
+                `${SUPABASE_URL}/rest/v1/comments?select=name,role,text&approved=eq.true&order=created_at.asc`,
+                { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+            );
+            if (!res.ok) return;
+            const rows = await res.json();
+            rows.forEach(({ name, role, text }) => {
+                const card = document.createElement('div');
+                card.className = 'testimonial-card';
+                card.innerHTML = `<div class="quote-icon">&#x201C;</div>
+                    <p class="testimonial-text">${escHtml(text)}</p>
+                    <div class="testimonial-author">
+                        <span class="author-name">${escHtml(name)}</span>
+                        <span class="author-position">${escHtml(role || 'Cliente')}</span>
+                    </div>`;
+                track.appendChild(card);
+            });
+            if (rows.length && window._testiRefresh) window._testiRefresh();
+        } catch (err) {
+            // si falla la carga, simplemente no se agregan comentarios extra
+        }
+    })();
+
+    // --- Envío de un nuevo comentario (queda pendiente de aprobación) ---
     (function() {
         const form = document.getElementById('commentForm');
-        const track = document.getElementById('testimonialsTrack');
-        if (!form || !track) return;
+        if (!form) return;
 
         const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xojoeppa';
-
-        function insertCard(name, role, text) {
-            const card = document.createElement('div');
-            card.className = 'testimonial-card';
-            card.innerHTML = `<div class="quote-icon">&#x201C;</div>
-                <p class="testimonial-text">${escHtml(text)}</p>
-                <div class="testimonial-author">
-                    <span class="author-name">${escHtml(name)}</span>
-                    <span class="author-position">${escHtml(role || 'Cliente')}</span>
-                </div>`;
-            track.appendChild(card);
-            if (window._testiRefresh) window._testiRefresh();
-        }
-
-        function escHtml(str) {
-            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        }
 
         form.onsubmit = async (e) => {
             e.preventDefault();
@@ -1197,22 +1245,33 @@ document.addEventListener("DOMContentLoaded", () => {
             const btn = form.querySelector('.btn-submit-comment');
             const orig = btn.textContent;
 
+            if (!SUPABASE_URL.includes('TU-PROYECTO')) {
+                try {
+                    await fetch(`${SUPABASE_URL}/rest/v1/comments`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            apikey: SUPABASE_ANON_KEY,
+                            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                            Prefer: 'return=minimal'
+                        },
+                        body: JSON.stringify({ name, role, text })
+                    });
+                } catch (err) { /* seguimos igual, no rompemos la experiencia */ }
+            }
+
             try {
                 await fetch(FORMSPREE_ENDPOINT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     body: JSON.stringify({ name, role, text })
                 });
-            } catch (err) {
-                // Si falla el envío (p. ej. todavía no configuraste el endpoint),
-                // no rompemos la experiencia: igual mostramos la tarjeta abajo.
-            }
+            } catch (err) { /* idem */ }
 
-            insertCard(name, role, text);
             form.reset();
-            btn.textContent = '✦ ¡GRACIAS POR TU OPINIÓN!';
+            btn.textContent = '✦ ¡GRACIAS! TU OPINIÓN SERÁ REVISADA ANTES DE PUBLICARSE';
             btn.disabled = true;
-            setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 3500);
+            setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 4500);
         };
     })();
 });
